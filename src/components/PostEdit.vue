@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {apiTags} from "@/request/api/tag";
+import {apiTagsAll} from "@/request/api/tag";
 import {apiPost, apiPostSave, apiPostUpdate} from "@/request/api/post";
 
 export default {
@@ -59,7 +59,7 @@ export default {
       })
     }
 
-    apiTags().then(response => {
+    apiTagsAll().then(response => {
       this.tags = response.data.list;
     })
   },

@@ -22,7 +22,8 @@ import {
     Select,
     Option,
     Form,
-    FormItem
+    FormItem,
+    Dialog
 } from "element-ui";
 
 Vue.use(Container);
@@ -47,3 +48,4 @@ Vue.use(Select);
 Vue.use(Option);
 Vue.use(Form);
 Vue.use(FormItem);
+Vue.use(Dialog);
