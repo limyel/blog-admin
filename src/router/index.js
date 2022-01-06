@@ -10,9 +10,24 @@ const routes = [
     component: () => import('../views/Theme'),
     children: [
       {
+        path: '',
+        name: 'Home',
+        component: () => import('../components/Home')
+      },
+      {
         path: 'posts',
         name: 'Posts',
-        component: () => import('../views/Posts')
+        component: () => import('../components/Posts')
+      },
+      {
+        path: 'posts/edit',
+        name: 'PostEdit',
+        component: () => import('../components/PostEdit')
+      },
+      {
+        path: 'tags',
+        name: 'Tags',
+        component: () => import('../components/Tags')
       }
     ]
   },

@@ -1,15 +1,15 @@
 <template>
-  <el-container>
+  <div>
 
-  </el-container>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Main"
+  name: "Tags"
 }
 </script>
 
-<style>
+<style lang="stylus" scoped>
 
 </style>

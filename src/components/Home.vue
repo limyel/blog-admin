@@ -1,12 +1,12 @@
 <template>
-  <el-container>
+  <div>
 
-  </el-container>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Posts"
+  name: "Home"
 }
 </script>
 

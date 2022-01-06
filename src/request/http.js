@@ -59,3 +59,23 @@ export const post = (url, data) => {
     })
   })
 }
+
+export const put = (url, data) => {
+  return new Promise((resolve, reject) => {
+    axios.put(url, data).then(response => {
+      resolve(response.data);
+    }).catch(error => {
+      reject(error.data);
+    })
+  })
+}
+
+export const delete_ = (url, params) => {
+  return new Promise((resolve, reject) => {
+    axios.delete(url, {params: params}).then(response => {
+      resolve(response.data);
+    }).catch(error => {
+      reject(error.data);
+    })
+  })
+}
