@@ -5,6 +5,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/Login')
+  },
+  {
     path: '/',
     name: 'Theme',
     component: () => import('../views/Theme'),
@@ -38,6 +43,17 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.path == '/login') {
+    return next();
+  }
+  let token = window.localStorage.JWT_TOKEN;
+  if (!token) {
+    return next('/login');
+  }
+  next();
 })
 
 export default router

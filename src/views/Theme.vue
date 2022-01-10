@@ -42,14 +42,39 @@
 </template>
 
 <script>
-import {apiMenus} from "@/request/api/menu";
-
 export default {
   name: "Theme",
   data() {
     return {
       isCollapse: false,
-      menus: [],
+      menus: [
+        {
+          id: 1,
+          name: '文章管理',
+          subMenus: [
+            {
+              id: 1,
+              name: '文章列表',
+              path: 'posts'
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: '标签管理',
+          subMenus: [
+            {
+              id: 1,
+              name: '标签列表',
+              path: 'tags'
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: '关于管理',
+        }
+      ],
     }
   },
   methods: {
@@ -58,9 +83,7 @@ export default {
     }
   },
   mounted() {
-    apiMenus().then(response => {
-      this.menus = response.data;
-    })
+
   }
 }
 </script>

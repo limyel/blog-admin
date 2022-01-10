@@ -122,7 +122,7 @@ export default {
     },
     handleCurrentChange(pageNum) {
       this.pageInfo.pageNum = pageNum;
-      this.getPosts();
+      this.getTags();
     },
     saveTag() {
       if (this.tag.id !== undefined) {
