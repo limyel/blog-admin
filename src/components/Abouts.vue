@@ -23,8 +23,14 @@
             <el-button
                 size="mini"
                 type="primary"
+                icon="el-icon-more"
+                @click="() => {itemsVisible = true; }">
+            </el-button>
+            <el-button
+                size="mini"
+                type="primary"
                 icon="el-icon-edit"
-                @click="() => {this.$router.push({name: 'AboutEdit'})}">
+                @click="() => {about.title = scope.row.title; about.sequence = scope.row.sequence; about.id = scope.row.id; editVisible = true; }">
             </el-button>
             <el-button
                 size="mini"
@@ -48,12 +54,72 @@
 
 
 
+
+    <el-dialog
+      title="关于items"
+      :visible.sync="itemsVisible"
+      width="50%"
+      @close="() => {itemsVisible = false;}">
+
+      <el-table :data="aboutItems" stripe border>
+        <el-table-column type="index"> </el-table-column>
+        <el-table-column prop="title" label="名称"></el-table-column>
+        <el-table-column prop="sequence" label="顺序"></el-table-column>
+
+        <el-table-column label="操作">
+          <template v-slot="scope">
+            <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-more"
+                @click="showItems(scope.row.id)">
+            </el-button>
+            <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-edit"
+                @click="() => {about.title = scope.row.title; about.sequence = scope.row.sequence; about.id = scope.row.id; editVisible = true; }">
+            </el-button>
+            <el-button
+                size="mini"
+                type="warning"
+                icon="el-icon-delete"
+                @click="deleteAbout(scope.row.id)">
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </el-dialog>
+
+
+    <!-- 编辑关于对话框 -->
+    <el-dialog
+        title="编辑关于"
+        :visible.sync="editVisible"
+        width="50%"
+        @close="() => {editVisible = false; about = {title: '', sequence: null}}">
+      <el-form :model="about" label-width="70px">
+        <el-form-item label="名称" prop="title">
+          <el-input v-model="about.title"></el-input>
+        </el-form-item>
+        <el-form-item label="顺序" prop="sequence">
+          <el-input v-model="about.sequence"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="() => {editVisible = false; about = {title: '', sequence: null};}">取 消</el-button>
+        <el-button type="primary" @click="updateAbout">更 新</el-button>
+      </span>
+    </el-dialog>
+
+
     <!-- 添加关于对话框 -->
     <el-dialog
         title="添加关于"
         :visible.sync="dialogVisible"
         width="50%"
-        @close="addDialogClosed">
+        @close="() => {dialogVisible = false; about = {title: '', sequence: null}}">
       <el-form :model="about" label-width="70px">
         <el-form-item label="名称" prop="title">
           <el-input v-model="about.title"></el-input>
@@ -71,20 +137,26 @@
 </template>
 
 <script>
-import {apiTagDelete, apiTags, apiTagSave, apiTagUpdate} from "@/request/api/tag";
+
+import {apiTagDelete} from "@/request/api/tag";
 import {showTimeDetail} from "@/utils/TimeUtil";
+import {apiAbouts, apiAboutSave, apiAboutUpdate} from "@/request/api/about";
+import {apiAboutItems} from "@/request/api/aboutItem";
 
 export default {
   name: "Abouts",
   data() {
     return {
       abouts: [],
+      aboutItems: [],
       pageInfo: {
         pageNum: 1,
         pageSize: 15,
         total: 0
       },
       dialogVisible: false,
+      editVisible: false,
+      itemsVisible: false,
       about: {
         title: '',
         sequence: null,
@@ -92,30 +164,52 @@ export default {
     }
   },
   methods: {
-    getTags() {
-      apiTags(this.pageInfo.pageNum, this.pageInfo.pageSize).then(response => {
-        this.tags = response.data.list;
+    getAbouts() {
+      apiAbouts(this.pageInfo.pageNum, this.pageInfo.pageSize).then(response => {
+        this.abouts = response.data.list;
         this.pageInfo.total = response.data.total;
         this.pageInfo.pageNum = response.data.pageNum;
+      });
+    },
+    updateAbout() {
+      apiAboutUpdate(this.about.id, this.about).then(response => {
+        if (response.code === 0) {
+          this.editVisible = false;
+          this.about = {
+            title: '',
+            sequence: null,
+          };
+          this.getAbouts();
+        }
       });
     },
     handleCurrentChange(pageNum) {
       this.pageInfo.pageNum = pageNum;
       this.getTags();
     },
-    saveTag() {
-      if (this.tag.id !== undefined) {
-        apiTagUpdate(this.tag.id, this.tag);
-      } else {
-        apiTagSave(this.tag);
-      }
+    saveAbout() {
+      apiAboutSave(this.about).then(response => {
+        if (response.code === 0) {
+          this.dialogVisible = false;
+          this.getAbouts();
+        }
+      });
     },
     deleteTag(id) {
       apiTagDelete(id);
+    },
+    getAboutItems(id) {
+      apiAboutItems(id).then(response => {
+        this.aboutItems = response.data;
+      });
+    },
+    showItems(aboutId) {
+      this.itemsVisible = true;
+      this.getAboutItems(aboutId);
     }
   },
   mounted() {
-    this.getTags();
+    this.getAbouts();
   },
   filters: {
     showTimeDetail

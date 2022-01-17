@@ -33,6 +33,11 @@ const routes = [
         path: 'tags',
         name: 'Tags',
         component: () => import('../components/Tags')
+      },
+      {
+        path: 'abouts',
+        name: 'Abouts',
+        component: () => import('../components/Abouts')
       }
     ]
   },

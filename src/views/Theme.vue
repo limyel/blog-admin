@@ -73,6 +73,18 @@ export default {
         {
           id: 3,
           name: '关于管理',
+          subMenus: [
+            {
+              id: 1,
+              name: '关于列表',
+              path: 'abouts'
+            },
+            {
+              id: 2,
+              name: '关于item列表',
+              path: 'about-items'
+            }
+          ]
         }
       ],
     }
