@@ -24,7 +24,7 @@
                 size="mini"
                 type="primary"
                 icon="el-icon-more"
-                @click="() => {itemsVisible = true; }">
+                @click="showItems(scope.row.id)">
             </el-button>
             <el-button
                 size="mini"
@@ -56,35 +56,62 @@
 
 
     <el-dialog
+        title="编辑item"
+        :visible.sync="editItemVisible"
+        width="50%"
+        @close="() => {editItemVisible = false; aboutId = null;}">
+
+      <el-form :model="aboutItem" label-width="70px">
+        <el-form-item label="项目名" prop="name">
+          <el-input v-model="aboutItem.name"></el-input>
+        </el-form-item>
+        <el-form-item label="链接" prop="link">
+          <el-input v-model="aboutItem.link"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="aboutItem.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="() => {editItemVisible = false; aboutItem = {name: '', link: '', description: '', aboutId: null};}">取 消</el-button>
+        <el-button type="primary" @click="saveAboutItem">保 存</el-button>
+      </span>
+
+    </el-dialog>
+
+
+
+    <el-dialog
       title="关于items"
       :visible.sync="itemsVisible"
       width="50%"
       @close="() => {itemsVisible = false;}">
 
+      <el-row :gutter="20">
+        <el-col :span="4">
+          <el-button type="primary" @click="() => {editItemVisible = true;}">新增关于item</el-button>
+        </el-col>
+      </el-row>
+
       <el-table :data="aboutItems" stripe border>
         <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="title" label="名称"></el-table-column>
-        <el-table-column prop="sequence" label="顺序"></el-table-column>
+        <el-table-column prop="name" label="项目名"></el-table-column>
+        <el-table-column prop="link" label="链接"></el-table-column>
+        <el-table-column prop="description" label="描述"></el-table-column>
 
         <el-table-column label="操作">
           <template v-slot="scope">
             <el-button
                 size="mini"
                 type="primary"
-                icon="el-icon-more"
-                @click="showItems(scope.row.id)">
-            </el-button>
-            <el-button
-                size="mini"
-                type="primary"
                 icon="el-icon-edit"
-                @click="() => {about.title = scope.row.title; about.sequence = scope.row.sequence; about.id = scope.row.id; editVisible = true; }">
+                @click="() => {aboutItem = scope.row; editItemVisible = true; }">
             </el-button>
             <el-button
                 size="mini"
                 type="warning"
                 icon="el-icon-delete"
-                @click="deleteAbout(scope.row.id)">
+                @click="deleteAboutItem(scope.row.id)">
             </el-button>
           </template>
         </el-table-column>
@@ -138,10 +165,9 @@
 
 <script>
 
-import {apiTagDelete} from "@/request/api/tag";
 import {showTimeDetail} from "@/utils/TimeUtil";
-import {apiAbouts, apiAboutSave, apiAboutUpdate} from "@/request/api/about";
-import {apiAboutItems} from "@/request/api/aboutItem";
+import {apiAboutDelete, apiAbouts, apiAboutSave, apiAboutUpdate} from "@/request/api/about";
+import {apiAboutItemDelete, apiAboutItems, apiAboutItemSave, apiAboutItemUpdate} from "@/request/api/aboutItem";
 
 export default {
   name: "Abouts",
@@ -157,10 +183,18 @@ export default {
       dialogVisible: false,
       editVisible: false,
       itemsVisible: false,
+      editItemVisible: false,
       about: {
         title: '',
         sequence: null,
-      }
+      },
+      aboutItem: {
+        name: '',
+        link: '',
+        description: '',
+        aboutId: null
+      },
+      aboutId: null
     }
   },
   methods: {
@@ -195,8 +229,19 @@ export default {
         }
       });
     },
-    deleteTag(id) {
-      apiTagDelete(id);
+    deleteAbout(aboutId) {
+      apiAboutDelete(aboutId).then(response => {
+        if (response.code === 0) {
+          this.getAbouts();
+        }
+      });
+    },
+    deleteAboutItem(aboutItemId) {
+      apiAboutItemDelete(aboutItemId).then(response => {
+        if (response.code === 0) {
+          this.getAboutItems(this.aboutId);
+        }
+      })
     },
     getAboutItems(id) {
       apiAboutItems(id).then(response => {
@@ -205,7 +250,35 @@ export default {
     },
     showItems(aboutId) {
       this.itemsVisible = true;
+      this.aboutId = aboutId;
       this.getAboutItems(aboutId);
+    },
+    saveAboutItem() {
+      if (this.aboutItem.id !== undefined) {
+        apiAboutItemUpdate(this.aboutItem).then(response => {
+          if (response.code === 0) {
+            this.editItemVisible = false;
+            this.aboutItem = {
+              name: '',
+              link: '',
+              description: '',
+              aboutId: null
+            };
+          }
+        });
+      } else {
+        this.aboutItem.aboutId = this.aboutId;
+        apiAboutItemSave(this.aboutItem).then(response => {
+          if (response.code === 0) {
+            this.editItemVisible = false;
+            this.aboutItem = {
+              name: '',
+              link: '',
+              description: ''
+            };
+          }
+        })
+      }
     }
   },
   mounted() {

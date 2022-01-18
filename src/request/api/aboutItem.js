@@ -11,8 +11,9 @@ export function apiAboutItemSave(data) {
     return post(baseUrl, data);
 }
 
-export function apiAboutItemUpdate(id, data) {
-    let url = baseUrl + '/' + id;
+export function apiAboutItemUpdate(data) {
+    let url = baseUrl + '/' + data.id;
+    delete data.id;
     return put(url, data);
 }
 
