@@ -71,9 +71,12 @@
         <el-form-item label="描述" prop="description">
           <el-input v-model="aboutItem.description"></el-input>
         </el-form-item>
+        <el-form-item label="顺序" prop="sequence">
+          <el-input v-model="aboutItem.sequence"></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="() => {editItemVisible = false; aboutItem = {name: '', link: '', description: '', aboutId: null};}">取 消</el-button>
+        <el-button @click="() => {editItemVisible = false; aboutItem = {name: '', link: '', description: '', aboutId: null, sequence: 0};}">取 消</el-button>
         <el-button type="primary" @click="saveAboutItem">保 存</el-button>
       </span>
 
@@ -98,6 +101,7 @@
         <el-table-column prop="name" label="项目名"></el-table-column>
         <el-table-column prop="link" label="链接"></el-table-column>
         <el-table-column prop="description" label="描述"></el-table-column>
+        <el-table-column prop="sequence" label="顺序"></el-table-column>
 
         <el-table-column label="操作">
           <template v-slot="scope">
@@ -125,7 +129,7 @@
         title="编辑关于"
         :visible.sync="editVisible"
         width="50%"
-        @close="() => {editVisible = false; about = {title: '', sequence: null}}">
+        @close="() => {editVisible = false; about = {title: '', sequence: 0}}">
       <el-form :model="about" label-width="70px">
         <el-form-item label="名称" prop="title">
           <el-input v-model="about.title"></el-input>
@@ -135,7 +139,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="() => {editVisible = false; about = {title: '', sequence: null};}">取 消</el-button>
+        <el-button @click="() => {editVisible = false; about = {title: '', sequence: 0};}">取 消</el-button>
         <el-button type="primary" @click="updateAbout">更 新</el-button>
       </span>
     </el-dialog>
@@ -186,13 +190,14 @@ export default {
       editItemVisible: false,
       about: {
         title: '',
-        sequence: null,
+        sequence: 0,
       },
       aboutItem: {
         name: '',
         link: '',
         description: '',
-        aboutId: null
+        aboutId: null,
+        sequence: 0
       },
       aboutId: null
     }
@@ -211,7 +216,7 @@ export default {
           this.editVisible = false;
           this.about = {
             title: '',
-            sequence: null,
+            sequence: 0,
           };
           this.getAbouts();
         }
@@ -262,7 +267,8 @@ export default {
               name: '',
               link: '',
               description: '',
-              aboutId: null
+              aboutId: null,
+              sequence: 0
             };
           }
         });
@@ -274,7 +280,8 @@ export default {
             this.aboutItem = {
               name: '',
               link: '',
-              description: ''
+              description: '',
+              sequence: 0
             };
           }
         })
